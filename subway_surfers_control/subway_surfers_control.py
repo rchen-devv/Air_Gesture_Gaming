@@ -11,16 +11,16 @@ while cap.isOpened():
     success, frame = cap.read()
     if not success: 
         continue
-
+    # Convert RBG from BGR 
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = pose.process(frame_rgb)
-
+    # if pose detected, analyze wrist position
     if results.pose_landmarks:
         landmarks = results.pose_landmarks.landmark
         right_wrist = landmarks[mp_pose.PoseLandmark.RIGHT_WRIST]
         left_wrist = landmarks[mp_pose.PoseLandmark.LEFT_WRIST]
         right_shoulder = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER]
-
+        # Control logic - wrist above shoulder triggeres keypress 
         if right_wrist.y < right_shoulder.y: 
             pyautogui.press("up")
 
@@ -32,6 +32,6 @@ while cap.isOpened():
     if cv2.waitKey(5) & 0xFF == ord("q"):
         break
 
+
     cap.release()
-    cap.destroyAllWindows()
-    
+    cv2.destroyAllWindows()
